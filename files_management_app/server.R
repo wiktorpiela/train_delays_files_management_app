@@ -15,6 +15,13 @@ server <- function(input, output, session){
                        value = 1)
     })
   
+  observeEvent(input$archive_raw,{
+    
+    updateTextInput(session,
+                    "parent_dir",
+                    value = "")
+  })
+  
   results <- eventReactive(input$import,{
     
     if(input$parent_dir==""){
@@ -35,7 +42,15 @@ server <- function(input, output, session){
           easyClose = TRUE
         )
       )
-    } else collect_files_from_dirs(input$parent_dir)
+    } else {
+      
+      showModal(modalDialog("Doing a function", footer=NULL))
+      data <- collect_files_from_dirs(input$parent_dir)
+      removeModal()
+      enable("archive_raw")
+    }
+    
+    return(data)
     
   })
   
@@ -49,7 +64,7 @@ server <- function(input, output, session){
   
   # archive raw files as list of dataframes in one rds file (create new directory)
   
-  # disable("archive_raw")
+  disable("archive_raw")
   
   observeEvent(input$archive_raw, {
     
@@ -77,7 +92,7 @@ server <- function(input, output, session){
       
       dir.create(parent_dir_raw_archive)
       
-      write_rds(raw_data_list(),paste0(parent_dir_raw_archive,"\\",Sys.Date(),"raw_unique_data_list.rds"))
+      write_rds(raw_data_list(),paste0(parent_dir_raw_archive,"\\",Sys.Date(),"_raw_unique_data_list.rds"))
       
     }
     

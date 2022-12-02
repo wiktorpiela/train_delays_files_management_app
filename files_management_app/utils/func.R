@@ -6,7 +6,7 @@ collect_files_from_dirs <- function(parent_dir){
   all_files_path <- list.files(parent_dir,
                                pattern = ".parquet",
                                recursive = TRUE,
-                               full.names = TRUE)[1:100]
+                               full.names = TRUE)
   
   data <- lapply(all_files_path, arrow::read_parquet)
   
@@ -30,3 +30,5 @@ collect_files_from_dirs <- function(parent_dir){
 
   return(list(uni = uni, all_files_path = all_files_path))
 }
+
+

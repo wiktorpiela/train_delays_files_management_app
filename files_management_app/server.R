@@ -6,22 +6,12 @@ server <- function(input, output, session){
   
   observeEvent(input$import,{
     
-    updateTextInput(session,
-                    "parent_dir",
-                    value = "")
+    updateTextInput(session, "parent_dir", value = "")
     
-    updateNumericInput(session,
-                       "n_list",
-                       value = 1)
+    updateNumericInput(session, "n_list", value = 1)
+    
     })
-  
-  observeEvent(input$archive_raw,{
-    
-    updateTextInput(session,
-                    "parent_dir",
-                    value = "")
-  })
-  
+
   results <- eventReactive(input$import,{
     
     combine_import(input$file_ext, input$parent_dir)
@@ -44,6 +34,8 @@ server <- function(input, output, session){
   disable("archive_raw")
   
   observeEvent(input$archive_raw, {
+    
+    updateTextInput(session, "parent_dir", value = "")
     
     parent_dir_raw_archive <- paste0(input$parent_dir,"\\",Sys.Date(),"_raw_archive")
     

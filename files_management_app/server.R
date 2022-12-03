@@ -24,43 +24,20 @@ server <- function(input, output, session){
   
   results <- eventReactive(input$import,{
     
-    if(input$parent_dir==""){
-      
-      showModal(
-        modalDialog(
-          title = "Warning!",
-          "You have to input directory!",
-          easyClose = TRUE
-        )
-      )
-    } else if(dir.exists(input$parent_dir)==FALSE){
-      
-      showModal(
-        modalDialog(
-          title = "Warning!",
-          "Directory doesn't exist!",
-          easyClose = TRUE
-        )
-      )
-    } else {
-      
-      showModal(modalDialog("Doing a function", footer=NULL))
-      data <- collect_files_from_dirs(input$parent_dir)
-      removeModal()
-      enable("archive_raw")
-    }
-    
-    return(data)
+    combine_import(input$file_ext, input$parent_dir)
     
   })
   
-  raw_data_list <- reactive(results()$uni)
+  raw_data_list <- reactive(results()$data)
   
   files_dir <- reactive(results()$all_files_path)
   
-  output$ile_rekordow <- renderText(length(raw_data_list()))
-  
   output$tab <- renderTable(raw_data_list()[[input$n_list]])
+  
+  
+  
+  
+  
   
   # archive raw files as list of dataframes in one rds file (create new directory)
   

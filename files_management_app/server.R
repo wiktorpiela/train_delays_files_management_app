@@ -3,8 +3,9 @@ library("shinyjs")
 source("utils/func.R")
 
 server <- function(input, output, session){
-  
-  #import files: raw - .parquet, preprocessed - .rds, prepared - .parquet
+ 
+
+# import files: raw - .parquet, preprocessed - .rds, prepared - .p --------
   
   observeEvent(input$import,{
     
@@ -25,53 +26,49 @@ server <- function(input, output, session){
   
   output$tab <- renderTable(dataset()[[input$n_list]])
   
+# archive raw files as list of dataframes in one rds file -----------------
 
-  
-  
-  
-  
-  
-  
-  
-  # archive raw files as list of dataframes in one rds file (create new directory)
-  
   disable("archive_raw")
   
   observeEvent(input$archive_raw, {
     
     updateTextInput(session, "parent_dir", value = "")
     
-    parent_dir_raw_archive <- paste0(input$parent_dir,"\\",Sys.Date(),"_raw_archive")
-    
-    if(parent_dir_raw_archive==""){
+    if(input$parent_dir==""){
       
-      showModal(
-        modalDialog(
-          title = "Warning!",
-          "You have to input directory!",
-          easyClose = TRUE
-        )
-      )
-    } else if(file.exists(parent_dir_raw_archive)){
+      show_my_modal("Please input directory!")
       
-      showModal(
-        modalDialog(
-          title = "Warning!",
-          "Directory already exist!",
-          easyClose = TRUE
-        )
-      )
+    } else if(!dir.exists(input$parent_dir)){
+      
+      show_my_modal("Directory doesn't exist!")
+      
     } else { 
       
-      #dir.create(parent_dir_raw_archive)
-      
-      write_rds(results(),paste0(parent_dir_raw_archive,"\\",Sys.Date(),"_raw_unique_data_list.rds"))
+      write_rds(dataset(),paste0(input$parent_dir,"\\",Sys.Date(),"_raw_unique_data.rds"))
       
     }
     
   })
   
 
+# remove raw parquet files ------------------------------------------------
+
+  observeEvent(input$remove_parquet_raw_data_files, {
+    
+    show_my_modal("Processing...")
+    
+    file_paths_to_remove <- list.files(input$parent_dir,
+                                       pattern = ".parquet",
+                                       recursive = TRUE,
+                                       full.names = TRUE)
+    
+    updateTextInput(session, "parent_dir", value = "")
+    
+    file.remove(file_paths_to_remove)
+    
+    removeModal()
+    
+  })
   
   
   
@@ -82,6 +79,24 @@ server <- function(input, output, session){
 
   
     
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
 # modify dictionary -------------------------------------------------------
   

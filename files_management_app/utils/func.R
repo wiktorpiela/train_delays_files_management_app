@@ -96,7 +96,7 @@ show_my_modal <- function(subtitle){
 combine_import <- function(file_ext, parent_dir){
   
   if(parent_dir==""){
-    show_my_modal("You have to input directory!")
+    show_my_modal("Please input input directory!")
     } else if(!dir.exists(parent_dir)){
       show_my_modal("Directory doesn't exist!")
     } else {

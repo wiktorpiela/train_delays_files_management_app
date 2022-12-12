@@ -16,5 +16,6 @@ manage_files <- tabPanel("Manage files",
                          actionButton("import","Import"),
                          actionButton("archive_raw", "Archive raw files"),
                          numericInput("n_list","element listy", value = NULL),
-                         tableOutput("tab")
+                         tableOutput("tab"),
+                         textOutput("length")
                          )

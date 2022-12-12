@@ -1,9 +1,9 @@
 library("tidyverse")
 
-flattenlist <- function(lst){  
+flattenlist <- function(lst){
   morelists <- sapply(lst, function(xprime) class(xprime)[1]=="list")
   out <- c(lst[!morelists], unlist(lst[morelists], recursive=FALSE))
-  if(sum(morelists)){ 
+  if(sum(morelists)){
     Recall(out)
   }else{
     return(out)
@@ -11,11 +11,11 @@ flattenlist <- function(lst){
 }
 
 collect_files_from_dirs_parquet <- function(parent_dir){
-
+  
   all_files_path <- list.files(parent_dir,
                                pattern = ".parquet",
                                recursive = TRUE,
-                               full.names = TRUE)[1:100]
+                               full.names = TRUE)
   
   data <- lapply(all_files_path, arrow::read_parquet)
   
@@ -36,9 +36,10 @@ collect_files_from_dirs_parquet <- function(parent_dir){
   }
   
   uni <- discard(uni,is.null)
+  
   data <- uni
-
-  return(list(data = data, all_files_path = all_files_path))
+  
+  return(data)
 }
 
 collect_files_from_dirs_rds <- function(parent_dir){
@@ -77,7 +78,7 @@ collect_files_from_dirs_rds <- function(parent_dir){
   uni <- discard(uni,is.null)
   data <- uni
   
-  return(list(data = data, all_files_path = all_files_path))
+  return(data)
 }
 
 show_my_modal <- function(subtitle){
@@ -96,7 +97,7 @@ combine_import <- function(file_ext, parent_dir){
   
   if(parent_dir==""){
     show_my_modal("You have to input directory!")
-    } else if(dir.exists(parent_dir)==FALSE){
+    } else if(!dir.exists(parent_dir)){
       show_my_modal("Directory doesn't exist!")
     } else {
       showModal(modalDialog("Doing a function", footer=NULL))
@@ -109,5 +110,4 @@ combine_import <- function(file_ext, parent_dir){
       enable("archive_raw")
       return(data)
     }
-  
 }

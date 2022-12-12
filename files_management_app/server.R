@@ -4,25 +4,29 @@ source("utils/func.R")
 
 server <- function(input, output, session){
   
+  #import files: raw - .parquet, preprocessed - .rds, prepared - .parquet
+  
   observeEvent(input$import,{
     
     updateTextInput(session, "parent_dir", value = "")
-    
     updateNumericInput(session, "n_list", value = 1)
     
     })
 
-  results <- eventReactive(input$import,{
+  dataset <- eventReactive(input$import,{
     
     combine_import(input$file_ext, input$parent_dir)
     
   })
   
-  raw_data_list <- reactive(results()$data)
+  output$length <- renderText(paste("Dataframes amount:",
+                                    format(length(dataset()), big.mark=" "))
+  )
   
-  files_dir <- reactive(results()$all_files_path)
+  output$tab <- renderTable(dataset()[[input$n_list]])
   
-  output$tab <- renderTable(raw_data_list()[[input$n_list]])
+
+  
   
   
   
@@ -59,9 +63,9 @@ server <- function(input, output, session){
       )
     } else { 
       
-      dir.create(parent_dir_raw_archive)
+      #dir.create(parent_dir_raw_archive)
       
-      write_rds(raw_data_list(),paste0(parent_dir_raw_archive,"\\",Sys.Date(),"_raw_unique_data_list.rds"))
+      write_rds(results(),paste0(parent_dir_raw_archive,"\\",Sys.Date(),"_raw_unique_data_list.rds"))
       
     }
     
